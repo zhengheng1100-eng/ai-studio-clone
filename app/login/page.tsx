@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { login } from './lib/storage'
+import { login } from '@/lib/storage'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
