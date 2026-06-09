@@ -3,8 +3,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 // import { isAuthenticated } from '@/lib/storage' // disabled for demo
-import { generateId, formatDate } from '@/lib/utils'
-import { AVAILABLE_MODELS } from '@/lib/types'
+import { generateId, formatDate } from '../lib/utils'
+import { AVAILABLE_MODELS } from '../lib/types'
 
 export default function Playground() {
   const router = useRouter()
