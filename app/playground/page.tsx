@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { isAuthenticated } from '@/lib/storage'
+// import { isAuthenticated } from '@/lib/storage' // disabled for demo
 import { generateId, formatDate } from '@/lib/utils'
 import { AVAILABLE_MODELS } from '@/lib/types'
 
@@ -10,14 +10,21 @@ export default function Playground() {
   const router = useRouter()
   const [model, setModel] = useState(AVAILABLE_MODELS[0].id)
   const [input, setInput] = useState('')
-  const [messages, setMessages] = useState([] as any[])
+  const [messages, setMessages] = useState(() => {
+    // Load saved messages from localStorage if available
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('playground_messages')
+        return stored ? JSON.parse(stored) : []
+      } catch { return [] }
+    }
+    return []
+  })
   const [loading, setLoading] = useState(false)
   const [searchEnabled, setSearchEnabled] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!isAuthenticated()) router.push('/login')
-  }, [])
+  // Authentication check removed for demo purposes
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -26,7 +33,11 @@ export default function Playground() {
   const sendMessage = async () => {
     if (!input.trim()) return
     const userMsg = { id: generateId(), role: 'user', content: input, timestamp: new Date() }
-    setMessages(prev => [...prev, userMsg])
+    setMessages(prev => {
+        const updated = [...prev, userMsg]
+        if (typeof window !== 'undefined') localStorage.setItem('playground_messages', JSON.stringify(updated))
+        return updated
+      })
     setLoading(true)
     setInput('')
     try {
@@ -37,10 +48,18 @@ export default function Playground() {
       })
       const data = await res.json()
       const botMsg = { id: generateId(), role: 'model', content: data.response || 'Error', timestamp: new Date() }
-      setMessages(prev => [...prev, botMsg])
+      setMessages(prev => {
+        const updated = [...prev, botMsg]
+        if (typeof window !== 'undefined') localStorage.setItem('playground_messages', JSON.stringify(updated))
+        return updated
+      })
     } catch (e) {
       const errMsg = { id: generateId(), role: 'model', content: 'Request failed', timestamp: new Date() }
-      setMessages(prev => [...prev, errMsg])
+      setMessages(prev => {
+        const updated = [...prev, errMsg]
+        if (typeof window !== 'undefined') localStorage.setItem('playground_messages', JSON.stringify(updated))
+        return updated
+      })
     } finally {
       setLoading(false)
     }
