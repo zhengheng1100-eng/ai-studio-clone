@@ -3,14 +3,14 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 // import { isAuthenticated } from '@/lib/storage' // disabled for demo
-import { generateId, formatDate } from './lib'
-import { AVAILABLE_MODELS } from './lib'
+import { generateId, formatDate } from '../utils'
+import { AVAILABLE_MODELS } from '../types'
 
 export default function Playground() {
   const router = useRouter()
   const [model, setModel] = useState(AVAILABLE_MODELS[0].id)
   const [input, setInput] = useState('')
-  const [messages, setMessages] = useState(() => {
+  const [messages, setMessages] = useState<any[]>(() => {
     // Load saved messages from localStorage if available
     if (typeof window !== 'undefined') {
       try {

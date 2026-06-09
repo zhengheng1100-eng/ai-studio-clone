@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { isAuthenticated } from './lib';
+import { isAuthenticated } from './storage';
 
 export default function RootPage() {
   const router = useRouter();
